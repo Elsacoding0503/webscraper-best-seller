@@ -16,14 +16,14 @@ url_kingstone = 'https://www.kingstone.com.tw/bestseller/best/book?ranktype=y'
 response_kingstone = requests.get(url=url_kingstone, headers=headers)
 soup_kingstone = bs(response_kingstone.text, 'lxml')
 
-cookies = response_kingstone.cookies.get_dict()
-jar = requests.utils.cookiejar_from_dict(cookies)
-
 title = [i.text.strip() for i in soup_kingstone.find_all('div', 'modProName')]
 author = [i.text for i in soup_kingstone.find_all('a', 'mProBlue')]
 ranking = [i.text.strip().split('P')[1] for i in soup_kingstone.find_all('div', 'modProRank')]
 price = [i.text.split('特價')[1].replace('元','') for i in soup_kingstone.find_all('div', 'priceset')]
 url = [i.a['href'] for i in soup_kingstone.find_all('div', 'modProName')]
+
+cookies = response_kingstone.cookies.get_dict()
+jar = requests.utils.cookiejar_from_dict(cookies)
 
 isbn = []
 rs = requests.session()
@@ -39,7 +39,6 @@ print(len(ranking))
 print(len(price))
 print(len(url))
 print(len(isbn))
-
 
 dict_kingstone = {}
 dict_kingstone['title'] = title

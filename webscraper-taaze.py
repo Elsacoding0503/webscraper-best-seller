@@ -36,11 +36,12 @@ for i in range(1,6):
     result_tazze = response_taaze.json()
     for result in result_tazze['result1']:
         all_taaze.append(result)
+    time.sleep(2)
 print(len(all_taaze))
 
-titile = [i['titleMain'] for i in all_taaze]
+title = [i['titleMain'] for i in all_taaze]
 author = [i['author'] for i in all_taaze]
-ranking = [i for i,j in enumerate(all_taaze)]
+ranking = [i+1 for i,j in enumerate(all_taaze)]
 price = [i['salePrice'] for i in all_taaze]
 url = ['https://www.taaze.tw/products/' + i['prodId'] + '.html' for i in all_taaze]
 
@@ -54,8 +55,15 @@ for u in url:
         isbn.append('')
     time.sleep(random.uniform(1,3))
 
+print(len(title))
+print(len(author))
+print(len(ranking))
+print(len(price))
+print(len(url))
+print(len(isbn))
+
 dict_taaze = {}
-dict_taaze['titile'] = titile
+dict_taaze['title'] = title
 dict_taaze['author'] = author
 dict_taaze['ranking'] = ranking
 dict_taaze['price'] = price

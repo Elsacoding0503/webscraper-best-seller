@@ -8,6 +8,8 @@ from selenium.webdriver.chrome.service import Service
 from fake_useragent import UserAgent 
 from selenium.webdriver.chrome.options import Options
 import credential
+import requests
+import time, random
 
 
 ua = UserAgent()
@@ -30,14 +32,37 @@ ranking = [i+1 for i,j in enumerate(title)]
 price = [i.text.split('$')[1] for i in soup_readmoo.find_all('span', 'price our-price')]
 url = [i.a['href'] for i in soup_readmoo.find_all('h2', {'class':'title'})]
 
+ua = UserAgent()
+headers = {
+    'User-Agent': ua.random
+}
+
+isbn = []
+for u in url:
+    readmoo_detail = requests.get(url=u, headers=headers)
+    soup_detail = bs(readmoo_detail.text,'lxml')
+    try:
+        isbn.append(soup_detail.find("span", {'itemprop': 'isbn'}).text)
+    except:
+        isbn.append('')
+    time.sleep(random.uniform(1,3))
+
+print(len(title))
+print(len(author))
+print(len(ranking))
+print(len(price))
+print(len(url))
+print(len(isbn))    
+
 dict_readmoo = {}
 dict_readmoo['title'] = title
 dict_readmoo['author'] = author
 dict_readmoo['ranking'] = ranking
 dict_readmoo['price'] = price
 dict_readmoo['url'] = url
-df_readmoo = pd.DataFrame(dict_readmoo)
+dict_readmoo['isbn'] = isbn
 
+df_readmoo = pd.DataFrame(dict_readmoo)
 engine = credential.engine
 dtypedict = {
 'title': Text(),
@@ -45,6 +70,7 @@ dtypedict = {
 'ranking': Integer(),    
 'price': Integer(),
 'url': Text(),
+'isbn': Text(),
 }
 
 df_readmoo.to_sql(name='讀墨',con=engine.connect(), if_exists='replace',dtype=dtypedict,index=False)
